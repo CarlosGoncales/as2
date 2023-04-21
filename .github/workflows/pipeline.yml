@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: apt-get update
+      - run: sudo apt-get update
       - name: Build
         run: echo "Build-job executado com sucesso :)"
 
