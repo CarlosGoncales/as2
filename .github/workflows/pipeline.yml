@@ -21,6 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - run: sudo pip install flask
       - run: python3 app.py
       - uses: AppThreat/sast-scan-action@master
         with:
