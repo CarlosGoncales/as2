@@ -22,10 +22,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: sudo pip install flask
-      - run: python3 app.py
       - uses: AppThreat/sast-scan-action@master
         with:
           type: "python"
+          
+
 
   deploy-job:
     needs: test-job
@@ -46,6 +47,7 @@ jobs:
           context: .
           push: true
           tags: carlosgoncales/as2devops:tag
+          
 
       - name: Deploy
         run: echo  "Deploy-job executado com sucesso :)"
