@@ -45,4 +45,4 @@ jobs:
           tags: carlosgoncales/as2devops:tag
 
       - name: Deploy
-        run: echo  "Deploy-job executado com sucesso :)""
+        run: echo  "Deploy-job executado com sucesso :)"
