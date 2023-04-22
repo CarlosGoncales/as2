@@ -18,7 +18,7 @@ jobs:
           context: .
           push: false
           tags: |
-            eronbetine/pucpr:latest
+            carlosgoncales/as2devops:latest
 
       - name: Save Image Digest
         id: save_digest
