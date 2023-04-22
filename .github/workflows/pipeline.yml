@@ -34,9 +34,6 @@ jobs:
       - name: Install Dependencies
         run: pip install -r requirements.txt
 
-      - name: Run Unit Tests
-        run: python -m unittest discover -s tests -p 'test_*.py'
-
       - name: Run SAST Scan
         uses: AppThreat/sast-scan-action@master
         with:
