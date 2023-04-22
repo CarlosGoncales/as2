@@ -12,7 +12,7 @@ def index():
         resultado = ""
 
     return (
-        	"""<h2> Calculadora do Dobro!!! </h2>"""
+        	"""<h2> Calculadora do Dobro!! </h2>"""
 		"""<br>"""
 		"""<form action="" method="get">
                 <input type="text" name="valor">
