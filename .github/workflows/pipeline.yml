@@ -65,8 +65,8 @@ jobs:
       - name: Send Notification
         if: github.event_name == 'push'
         env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          WEBHOOK_DISCORD: ${{ secrets.WEBHOOK_DISCORD }}
         run: |
           curl -X POST -H 'Content-type: application/json' \
             --data '{"content": "Uma nova imagem Docker foi publicada!"}' \
-            $DISCORD_WEBHOOK
+            $WEBHOOK_DISCORD
