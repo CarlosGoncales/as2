@@ -1,38 +1,52 @@
-name: CI
+name: CI/CD Pipeline
 
 on:
-  pull_request:
+  push:
     branches:
       - master
 
-  workflow_dispatch:
-
 jobs:
-  build-job:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - run: sudo apt-get update
-      - run: python3 -V
-      - name: Build
-        run: echo "Build-job executado com sucesso :)"
+      - name: Checkout Code
+        uses: actions/checkout@v2
 
-  test-job:
+      - name: Build Docker Image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: false
+          tags: |
+            eronbetine/pucpr:latest
+
+      - name: Save Image Digest
+        id: save_digest
+        run: echo "::set-output name=digest::$(docker inspect --format='{{index .RepoDigests 0}}' carlosgoncales/as2devops:latest)"
+
+  test:
     runs-on: ubuntu-latest
+    needs: build
     steps:
-      - uses: actions/checkout@v3
-      - run: sudo pip install flask
-      - uses: AppThreat/sast-scan-action@master
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Unit Tests
+        run: python -m unittest discover -s tests -p 'test_*.py'
+
+      - name: Run SAST Scan
+        uses: AppThreat/sast-scan-action@master
         with:
           type: "python"
-          
 
-
-  deploy-job:
-    needs: test-job
+  deploy:
     runs-on: ubuntu-latest
+    needs: test
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v2
 
       - name: Log in to Docker Hub
@@ -41,13 +55,21 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER__TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Push Docker Image
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
-          tags: carlosgoncales/as2devops:tag
-          
+          tags: |
+            carlosgoncales/as2devops:latest
+            carlosgoncales/as2devops:${{ github.sha }}
+          digest: ${{ needs.build.outputs.digest }}
 
-      - name: Deploy
-        run: echo  "Deploy-job executado com sucesso :)"
+      - name: Send Notification
+        if: github.event_name == 'push'
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+            --data '{"content": "Uma nova imagem Docker foi publicada!"}' \
+            $DISCORD_WEBHOOK
