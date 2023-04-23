@@ -67,5 +67,5 @@ jobs:
           WEBHOOK_DISCORD: ${{ secrets.WEBHOOK_DISCORD }}
         run: |
           curl -X POST -H 'Content-type: application/json' \
-            --data '{"content": "Imagem Docker publicada!"}' \
+            --data '{"content": " "}' \
             $WEBHOOK_DISCORD
